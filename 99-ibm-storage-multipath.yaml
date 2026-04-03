@@ -1,11 +1,11 @@
 apiVersion: node.harvesterhci.io/v1beta1
 kind: CloudInit
 metadata:
-  name: multipath-powermax-config
+  name: multipath-ibm-v7000
   namespace: harvester-system
 spec:
   matchSelector: {}
-  filename: 99_multipath_powermax.yaml
+  filename: 99_multipath_ibm_v7000.yaml
   contents: |
     stages:
       initramfs:

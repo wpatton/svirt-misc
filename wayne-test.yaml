@@ -1,0 +1,20 @@
+apiVersion: node.harvesterhci.io/v1beta1
+kind: CloudInit
+metadata:
+  name: wayne-test
+  namespace: harvester-system
+spec:
+  matchSelector: {}
+  filename: 99-wayne-test.yaml
+  contents: |
+    stages:
+      initramfs:
+        - name: "Configure wayne test"
+          files:
+            - path: /etc/waynetest.conf
+              permissions: 0644
+              owner: 0
+              group: 0
+              content: |
+                this is a test file wayne-test
+
