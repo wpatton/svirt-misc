@@ -16,8 +16,6 @@ spec:
               owner: 0
               group: 0
               content: |
-
-
                 defaults {
                     user_friendly_names "yes"
                 }
