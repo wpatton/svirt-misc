@@ -1,15 +1,15 @@
 apiVersion: node.harvesterhci.io/v1beta1
 kind: CloudInit
 metadata:
-  name: multipath-ibm-v7000
+  name: ibm-v7000-multipath
   namespace: harvester-system
 spec:
   matchSelector: {}
-  filename: 99_multipath_ibm_v7000.yaml
+  filename: 99-ibm-v7000-multipath.yaml
   contents: |
     stages:
-      initramfs:
-        - name: "Configure multipath for PowerMax"
+      network:
+        - name: "Configure multipath.conf for IBM V7000"
           files:
             - path: /etc/multipath.conf
               permissions: 0644
@@ -17,29 +17,28 @@ spec:
               group: 0
               content: |
                 defaults {
-                    user_friendly_names "yes"
+                    user_friendly_names no
+                    find_multipaths yes
                 }
                 blacklist {
-                    wwid 3600062b208887fc02b7cfbb331f5ce82
-                    wwid 3600062b21152a7002b7cfab1b2392d83
-                    wwid 3600062b21152a7002b73f40cdad91dc0
-                    devnode "^sda"
                 }
                 devices {
                     device {
-                            vendor "IBM"
-                            product "^2145"
-                            path_grouping_policy "group_by_prio"
-                            path_selector "round-robin 0"
-                            prio "alua"
-                            path_checker "tur"
-                            failback "immediate"
-                            no_path_retry "5"
-                            rr_weight "uniform"
-                            rr_min_io_rq 1  
+                        vendor "IBM"
+                        product "2145"
+                        path_grouping_policy "group_by_prio"
+                        path_selector "service-time 0"
+                        prio "alua"
+                        failback "immediate"
+                        rr_weight "uniform"
+                        no_path_retry "queue"
+                        features "1 queue_if_no_path"
+                        hardware_handler "1 alua"
+                        detect_prio "yes"
+                        dev_loss_tmo "infinity"
+                        fast_io_fail_tmo 5
                     }
                 }
-      boot:
         - name: "Enable and start multipathd"
           systemctl:
             enable:
