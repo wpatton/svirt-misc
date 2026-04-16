@@ -1,0 +1,87 @@
+apiVersion: node.harvesterhci.io/v1beta1
+kind: CloudInit
+metadata:
+  name: ibm-v7000-multipath-2
+  namespace: harvester-system
+spec:
+  matchSelector: {}
+  filename: 99-ibm-v7000-multipath-2.yaml
+  contents: |
+    stages:
+      network:
+        - name: "Configure multipath.conf for IBM V7000"
+          files:
+            - path: /etc/multipath.conf
+              permissions: 0644
+              owner: 0
+              group: 0
+              content: |
+                defaults {
+                    path_checker tur
+                    path_selector "round-robin 0"
+                    rr_weight uniform
+                    prio const
+                    rr_min_io_rq 1               
+                    polling_interval 30
+                    path_grouping_policy multibus
+                    find_multipaths yes
+                    no_path_retry fail
+                    user_friendly_names yes
+                    failback immediate
+                    checker_timeout 10
+                    fast_io_fail_tmo off
+                }
+                devices {
+                    device {
+                        path_checker tur
+                        product "FlashSystem"
+                        vendor "IBM"
+                        rr_weight uniform
+                        rr_min_io_rq 4               
+                        path_grouping_policy multibus
+                        path_selector "round-robin 0"
+                        no_path_retry fail
+                        failback immediate
+                    }
+                    device {
+                        path_checker tur
+                        product "FlashSystem-9840"
+                        vendor "IBM"
+                        fast_io_fail_tmo off
+                        rr_weight uniform
+                        rr_min_io_rq 1000            
+                        path_grouping_policy multibus
+                        path_selector "round-robin 0"
+                        no_path_retry fail
+                        failback immediate
+                    }
+                    device {
+                        vendor "IBM"
+                        product "2145"
+                        path_checker tur
+                        path_grouping_policy group_by_prio
+                        path_selector "service-time 0" # Used by Red Hat 7.x
+                        prio alua
+                        rr_min_io_rq 1
+                        rr_weight uniform 
+                        no_path_retry "5"
+                        dev_loss_tmo 120
+                        failback immediate
+                   }
+                }
+                blacklist {
+                  devnode "^sda"
+                }
+            - path: /etc/udev/rules.d/99-ibm-2145.rules
+              permissions: 0644
+              owner: 0
+              group: 0
+              content: |
+                # Set SCSI command timeout to 120s (default == 30 or 60) for IBM 2145 devices
+                SUBSYSTEM=="block", ACTION=="add", ENV{ID_VENDOR}=="IBM", ENV{ID_MODEL}=="2145", RUN+="/bin/sh -c 'echo 120 >/sys/block/%k/device/timeout'"
+        - name: "Enable and start multipathd"
+          systemctl:
+            enable:
+              - multipathd
+            start:
+              - multipathd

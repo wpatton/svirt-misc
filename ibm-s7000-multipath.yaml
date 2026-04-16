@@ -21,7 +21,7 @@ spec:
                     find_multipaths yes
                 }
                 blacklist {
-                    devnode "^sd[a-z0-9]+"
+                   devnode "^sd[a-z0-9]+"
                 }
                 devices {
                     device {
