@@ -11,7 +11,7 @@ spec:
       initramfs:
         - name: "Configure wayne test"
           files:
-            - path: /etc/waynetest.conf
+            - path: /etc/waynetest2.conf
               permissions: 0644
               owner: 0
               group: 0
