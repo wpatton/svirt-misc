@@ -24,16 +24,8 @@ bootcmd:
   - echo "net.ipv6.conf.lo.disable_ipv6=1" >> /etc/sysctl.d/99-ipv6.conf
 runcmd:
   - SUSEConnect -r REG_CODE
-  - - zypper
-    - refresh
-  - - zypper
-    - install
-    - -y
-    - qemu-guest-agent
-    - iptables
-  - - systemctl
-    - enable
-    - --now
-    - qemu-guest-agent.service
+  - [zypper, refresh]
+  - [zypper, install, -y, qemu-guest-agent, iptables]
+  - [systemctl, enable, --now, qemu-guest-agent.service]
 ssh_authorized_keys:
   - ssh-rsa ssh-rsa AAA.... name@email.com
