@@ -16,7 +16,7 @@ chpasswd:
   expire: False
 ssh_pwauth: True
 bootcmd:
-  - SUSEConnect -r INTERNAL-USE-ONLY-cb8e-8885
+  - SUSEConnect -r REG_CODE
   - sysctl -w net.ipv6.conf.all.disable_ipv6=1
   - sysctl -w net.ipv6.conf.default.disable_ipv6=1
   - sysctl -w net.ipv6.conf.lo.disable_ipv6=1
