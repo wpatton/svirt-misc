@@ -1,4 +1,4 @@
-i#cloud-config
+#cloud-config
 users:
   - default
   - name: tux
